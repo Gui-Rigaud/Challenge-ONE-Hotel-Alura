@@ -51,6 +51,7 @@ public class ReservasView extends JFrame {
 	private JLabel lblValorSimbolo; 
 	private JLabel labelAtras;
 	private Reserva reservaAtual;
+	private boolean dataValida = false;
 
 	/**
 	 * Launch the application.
@@ -160,14 +161,16 @@ public class ReservasView extends JFrame {
 				Date dataS = txtDataS.getDate();
 				DateTime dataSaida = new DateTime(dataS);
 				
-				if(dataEntrada.isBeforeNow() || dataSaida.isBeforeNow()) {
-					JOptionPane.showMessageDialog(null, "Coloque uma data válida!");
-				} else {				
+				if(!dataEntrada.isBeforeNow() || !dataSaida.isBeforeNow()) {				
 					int dias = Days.daysBetween((DateTime) dataEntrada, dataSaida).getDays();
 					
 					valor = dias * 49.90;
 					
 					txtValor.setText("R$ " + valor);
+					
+					dataValida = true;
+				} else {
+					dataValida = false;
 				}
 			}
 		});
@@ -319,13 +322,14 @@ public class ReservasView extends JFrame {
 		btnProximo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (ReservasView.txtDataE.getDate() != null && ReservasView.txtDataS.getDate() != null) {
+				if (ReservasView.txtDataE.getDate() != null && ReservasView.txtDataS.getDate() != null
+						&& dataValida) {
 					registraReserva();
 					setVisible(false);
 					RegistroHospede registro = new RegistroHospede(reservaAtual);
 					registro.setVisible(true);
 				} else {
-					JOptionPane.showMessageDialog(null, "Deve preencher todos os campos.");
+					JOptionPane.showMessageDialog(null, "Deve preencher todos os campos apropriadamente.");
 				}
 			}						
 		});
